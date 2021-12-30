@@ -1,0 +1,18 @@
+{
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "module": "commonjs",
+    "target": "ESNext",
+    "downlevelIteration": true,
+    "noEmit": false,
+    "sourceMap": false,
+    "baseUrl": ".",
+    "paths": {
+      "rx-bloc": ["../src"],
+      "rx-bloc/bloc": ["../src/bloc"],
+      "rx-bloc/interface": ["../src/interface"]
+    },
+    "outDir": "../dist/test"
+  },
+  "include": ["./**/*.ts"]
+}

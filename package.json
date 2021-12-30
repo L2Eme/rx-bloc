@@ -1,0 +1,28 @@
+{
+  "name": "rx-bloc",
+  "version": "0.1.0",
+  "main": "index.js",
+  "license": "MIT",
+  "scripts": {
+    "test": "jest dist/test/test/",
+    "compile": "tsc -b ./src/tsconfig.cjs.json ./test/tsconfig.base.json"
+  },
+  "exports": {
+    ".": {
+      "node": "./dist/cjs/index.js"
+    },
+    "./bloc": {
+      "node": "./dist/cjs/bloc.js"
+    },
+    "./rxbloc": {
+      "node": "./dist/cjs/rxbloc.js"
+    }
+  },
+  "peerDependencies": {
+    "rxjs": "^7.5.1"
+  },
+  "devDependencies": {
+    "@types/jest": "^27.0.3",
+    "rxjs": "^7.5.1"
+  }
+}

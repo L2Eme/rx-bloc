@@ -1,91 +1,5 @@
-import { Bloc } from '../src/bloc';
-import { IBlocState, IAction, ISender } from '../src/interface';
-
-type ActionTransfer = {
-	type: 'transfer',
-	payload: {
-		from: string,
-		to: string,
-		amount: number,
-	}
-}
-
-type ActionDeposit = {
-	type: 'deposit',
-	payload: {
-		to: string,
-		amount: number,
-	}
-}
-
-interface ActionWithdraw extends IAction<string, any> {
-	type: 'withdraw',
-	payload: {
-		from: string,
-		amount: number,
-	}
-}
-
-type Action = ActionTransfer
-	| ActionDeposit
-	| ActionWithdraw
-
-interface BlocState extends IBlocState<Action, any> { };
-
-function waitFor(time: number): Promise<void> {
-	return new Promise<void>(resolve => setTimeout(() => resolve(), time));
-}
-
-class ReadyState implements BlocState {
-
-	balance: {[i: string]: number} = {
-		a: 100,
-		b: 100,
-		c: 100
-	}
-
-	constructor() { }
-
-	async reduce(action: Action, send: ISender): Promise<any> {
-		if (action.type === 'transfer') {
-
-			let { from, to, amount } = action.payload;
-
-			send.state(new PendingState);
-			await waitFor(500);
-
-			this.balance[from] -= amount;
-			this.balance[to] += amount;
-			send.state(this);
-		}
-		else if (action.type === 'deposit') {
-
-			let { to, amount } = action.payload;
-
-			send.state(new PendingState);
-			await waitFor(500);
-
-			this.balance[to] += amount;
-			send.state(this);
-		}
-		else if (action.type === 'withdraw') {
-
-			let { from, amount } = action.payload;
-
-			send.state(new PendingState);
-			await waitFor(500);
-
-			this.balance[from] -= amount;
-			send.state(this);
-		}
-	}
-}
-
-class PendingState implements BlocState {
-	reduce(_action: Action, _send: ISender): Promise<any> {
-		return Promise.reject({ err: 'state is pending, unexpected to got this.' })
-	}
-}
+import { Bloc, BlocError } from '../src/bloc';
+import { Action, ReadyState, PendingState, ClosedState } from './account'
 
 describe("test bloc", function () {
 
@@ -145,16 +59,49 @@ describe("test bloc", function () {
 			}
 		})
 
-		let err = await bloc.request({
+		let errMsg = await bloc.request({
 			type: 'transfer',
 			payload: {
 				from: 'a', to: 'b', amount: 10
 			}
 		}).catch(e => {
-			return e
+			return e.message
 		})
 
-		expect(err).toStrictEqual({ err: 'bloc is pending.' })
+		expect(errMsg).toStrictEqual('bloc is pending.')
 
 	})
+
+	describe("test unexpected error", function() {
+
+		test("unexpected pending state.", async function () {
+			let s = new PendingState;
+
+			let msg = await s.reduce({} as any, {} as any)
+				.catch(e => {
+					return e.message
+				})
+
+			expect(msg).toMatch('state is pending, unexpected to got this.')
+		})
+
+		test("unexpected closed state.", async function () {
+
+			await bloc.request({
+				type: 'close', payload: {}
+			})
+
+			expect(bloc.state).toBeInstanceOf(ClosedState)
+
+			let msg = await bloc.request({
+				type: 'close', payload: {}
+			})
+				.catch(e => {
+					return e.message
+				})
+
+			expect(msg).toMatch('state is closed, unexpected to got this.')
+		})
+	})
+
 })

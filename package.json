@@ -1,11 +1,21 @@
 {
   "name": "rx-bloc",
   "version": "0.1.0",
-  "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "test": "jest dist/test/test/",
-    "compile": "tsc -b ./src/tsconfig.cjs.json ./test/tsconfig.base.json"
+    "test": "jest dist/test/test/ --detectOpenHandles",
+    "compile": "tsc -b ./src/tsconfig.cjs.json ./test/tsconfig.base.json",
+    "compile:types": "tsc -b ./src/tsconfig.types.json",
+    "compile:test": "tsc -b ./test/tsconfig.base.json"
+  },
+  "main": "./dist/cjs/index.js",
+  "types": "index.d.ts",
+  "typesVersions": {
+    ">=4.2": {
+      "*": [
+        "dist/types/*"
+      ]
+    }
   },
   "exports": {
     ".": {

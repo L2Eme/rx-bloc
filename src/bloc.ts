@@ -1,7 +1,25 @@
 import { IAction, IBlocState, } from './interface'
 
+export class BlocError extends Error {
+	
+}
+
 /**
- * 使用promise实现的Bloc核心模块
+ * 使用promise实现的Bloc核心模块。
+ * 
+ * 解除逻辑部分与调用部分的耦合：
+ * 所有的逻辑部分全部在BlocState上实现，
+ * 在具体例子中，Bloc模块可以使用RxBloc，或者ReactBloc，而不影响BlocState的逻辑。
+ * 
+ * Bloc的理念：
+ * 
+ * Bloc的主要是用场景在于处理与异步的模块交互，并保存一些状态，或者跟踪状态变化。
+ * 
+ * 涉及一个逻辑功能的调用，是Request还是dispatch，并不能由Caller决定。而是根据不同的功能决定。
+ * 所以，在bloc中只有Request的方式，必须等待BlocState的响应。
+ * 如果一个功能可以不等待返回，则可以在BlocState中直接返回一个假定的结果。
+ * 
+ * Bloc与State之间的唯一接口为Action
  */
 export class Bloc<A extends IAction<any, any>, R> {
 
@@ -29,7 +47,7 @@ export class Bloc<A extends IAction<any, any>, R> {
 	 */
 	request(action: A): Promise<R> {
 		if (this._isPending) {
-			return Promise.reject({ err: "bloc is pending." });
+			return Promise.reject(new BlocError("bloc is pending."));
 		}
 
 		this._onAction(action);

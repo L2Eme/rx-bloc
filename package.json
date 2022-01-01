@@ -1,6 +1,6 @@
 {
   "name": "@line100/rx-bloc",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "license": "MIT",
   "publishConfig": {
     "access": "public"
@@ -44,7 +44,7 @@
   "files": [
     "dist/cjs/**/!(*.tsbuildinfo)",
     "dist/types/**/!(*.tsbuildinfo)",
-    "src",
+    "src/**/!(*.tsbuildinfo)",
     "CHANGELOG.md",
     "package.json",
     "README.md",

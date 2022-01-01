@@ -20,6 +20,10 @@ export class BlocError extends Error {
  * 如果一个功能可以不等待返回，则可以在BlocState中直接返回一个假定的结果。
  * 
  * Bloc与State之间的唯一接口为Action
+ * 
+ * ```ts
+ * let bloc = new Bloc(new BlocState);
+ * ```
  */
 export class Bloc<A extends IAction<any, any>, R> {
 

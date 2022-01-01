@@ -1,3 +1,3 @@
 export { IAction, IBlocState, ISender } from './interface'
-export { Bloc } from './bloc'
+export { Bloc, BlocError } from './bloc'
 export { RxBloc } from './rxbloc'

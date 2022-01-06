@@ -68,7 +68,7 @@ describe("test bloc", function () {
 			return e.message
 		})
 
-		expect(errMsg).toStrictEqual('bloc is pending.')
+		expect(errMsg).toStrictEqual('state is pending')
 
 	})
 
@@ -82,7 +82,7 @@ describe("test bloc", function () {
 					return e.message
 				})
 
-			expect(msg).toMatch('state is pending, unexpected to got this.')
+			expect(msg).toMatch('state is pending')
 		})
 
 		test("unexpected closed state.", async function () {

@@ -51,47 +51,58 @@ export class ReadyState implements BlocState {
 
 	constructor() { }
 
-	async reduce(action: Action, send: ISender): Promise<any> {
+	reduce(action: Action, send: ISender): Promise<any> {
 		if (action.type === 'transfer') {
 
 			let { from, to, amount } = action.payload;
 
 			send.state(new PendingState);
-			await waitFor(500);
 
-			this.balance[from] -= amount;
-			this.balance[to] += amount;
-			send.state(this);
+			return (async () => {
+				await waitFor(500);
+
+				this.balance[from] -= amount;
+				this.balance[to] += amount;
+				send.state(this);
+			})()
 		}
 		else if (action.type === 'deposit') {
 
 			let { to, amount } = action.payload;
 
 			send.state(new PendingState);
-			await waitFor(500);
 
-			this.balance[to] += amount;
-			send.state(this);
+			return (async () => {
+				await waitFor(500);
+
+				this.balance[to] += amount;
+				send.state(this);
+			})()
 		}
 		else if (action.type === 'withdraw') {
 
 			let { from, amount } = action.payload;
 
 			send.state(new PendingState);
-			await waitFor(500);
 
-			this.balance[from] -= amount;
-			send.state(this);
+			return (async () => {
+				await waitFor(500);
+
+				this.balance[from] -= amount;
+				send.state(this);
+			})()
 		}
 		else if (action.type === 'close') {
 			send.state(new ClosedState)
+			return Promise.resolve()
 		}
+		return Promise.resolve()
 	}
 }
 
 export class PendingState implements BlocState {
 	reduce(_action: Action, _send: ISender): Promise<any> {
-		return Promise.reject(Error('state is pending, unexpected to got this.'))
+		return Promise.reject(Error('state is pending'))
 	}
 }
 

@@ -29,11 +29,7 @@ export class Bloc<A extends IAction<any, any>, R> {
 
 	private _state: IBlocState<A, R>
 
-	private _isPending = false;
-
 	get state() { return this._state; }
-
-	get isPending() { return this._isPending; }
 
 	constructor(state: IBlocState<A, R>) {
 		this._state = state;
@@ -50,13 +46,9 @@ export class Bloc<A extends IAction<any, any>, R> {
 	 * @param action 
 	 */
 	request(action: A): Promise<R> {
-		if (this._isPending) {
-			return Promise.reject(new BlocError("bloc is pending."));
-		}
 
 		this._onAction(action);
 
-		this._isPending = true;
 		return this._state.reduce(action, {
 			bloc: this,
 			state: (s) => {
@@ -64,10 +56,7 @@ export class Bloc<A extends IAction<any, any>, R> {
 				this._onState(s);
 			},
 			fleeting: this._onFleeting.bind(this),
-		}).then(ret => {
-			this._isPending = false;
-			return ret;
-		});
+		})
 	}
 
 	/**

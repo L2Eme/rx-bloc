@@ -24,7 +24,7 @@ export interface IBlocState<A extends IAction<any, any>, R> {
 
 	/**
 	 * 接受的action
-   * dart内置支持sync*，yeild可以表示时间。
+   * dart内置支持sync*，yeild可以表示状态按时间变化。
 	 * js则只能用sender模拟。
 	 * 
 	 * js的promise直接返回一个result
